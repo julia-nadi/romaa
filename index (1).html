@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>رحلة رسالة رومية</title>
+<title>رحلة رسالة رومية مع الجواجو😘</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
@@ -60,7 +60,20 @@ h2{font-family:var(--display);font-size:24px;margin:0}
 .done-all{background:var(--accent-soft);border-radius:14px;padding:18px;text-align:center;font-family:var(--display);font-size:22px}
 footer{display:flex;justify-content:center}
 .reset{background:transparent;border-color:var(--line);color:var(--muted);font-weight:500;font-size:14px;padding:6px 14px}
-@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+/* رسالة التهنئة المنبثقة */
+.celebrate{position:fixed;inset:0;background:rgba(20,26,22,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:grid;place-items:center;padding:24px;z-index:50;animation:fade .25s ease}
+.celebrate[hidden]{display:none}
+.celebrate-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px 24px;max-width:380px;width:100%;text-align:center;display:grid;gap:16px;box-shadow:0 20px 60px rgba(0,0,0,.28);animation:pop .35s cubic-bezier(.2,.8,.3,1.2)}
+.celebrate-emoji{font-size:54px;line-height:1}
+.celebrate-msg{font-family:var(--display);font-size:22px;line-height:1.55;margin:0;color:var(--ink)}
+.celebrate-card.birthday{border-color:var(--gold);box-shadow:0 20px 60px rgba(168,132,58,.35)}
+.celebrate-card.birthday .celebrate-emoji{font-size:64px}
+.celebrate-card.birthday .celebrate-msg{color:var(--accent)}
+.confetti{position:fixed;top:-14px;width:9px;height:14px;border-radius:2px;z-index:60;pointer-events:none;animation:fall linear forwards}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.85) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}.celebrate,.celebrate-card{animation:none}}
 </style>
 </head>
 <body>
@@ -97,6 +110,14 @@ footer{display:flex;justify-content:center}
   <footer><button class="reset" id="reset" type="button">ابدأ من الأول</button></footer>
 </div>
 
+<div class="celebrate" id="celebrate" hidden>
+  <div class="celebrate-card" role="dialog" aria-modal="true" aria-live="assertive">
+    <div class="celebrate-emoji" id="celebrateEmoji">💚</div>
+    <p class="celebrate-msg" id="celebrateMsg"></p>
+    <button class="primary" id="celebrateClose" type="button">تمام 💚</button>
+  </div>
+</div>
+
 <script>
 // ===== الإعدادات =====
 const START = new Date(2026, 9, 11);   // تاريخ البداية: 11 أكتوبر 2026 (الشهر بيبدأ من 0)
@@ -121,6 +142,26 @@ const CH = [
  ["التحيات والختام","نعمة ربنا يسوع المسيح معكم"]
 ];
 
+// رسالة تهنئة مختلفة لكل إصحاح لما جوجو تخلصه · آخر واحدة (١٦) هدية عيد الميلاد
+const MSG = [
+ "شاطر يا جوجو 😘 بابا يسوع بيحبك اوي!",
+ "برافو يا حبيبتي ❤️ كل إصحاح بيقرّبك ليه أكتر",
+ "جامدة يا جوجو ✨ ربنا فرحان بيكي النهاردة",
+ "تسلم إيدك اللي بتقلب الكلمة يا قمر 🌙 إيمانك زي إبراهيم",
+ "عندك سلام مع ربنا يا حبيبتي 🕊️ إنتي شاطرة اوي",
+ "إنتي حية لله يا جوجو ❤️ وده أحلى حاجة في الدنيا",
+ "ماتخافيش من أي صراع يا حبيبتي 💪 روح ربنا جواكي بتسندك",
+ "محدش يقدر يفصلك عن محبة المسيح يا جوجو 🥰",
+ "ربنا اختارك إنتي بالذات يا حبيبتي 🌸 إنتي غالية عنده",
+ "إيمانك بيزيد وإنتي بتسمعي كلمته يا جوجو 📖 شاطرة اوي",
+ "يا لعمق محبة ربنا ليكي يا حبيبتي 💚 كمّلي يا بطلة",
+ "قدّمي قلبك ذبيحة حية يا جوجو 🙏 وربنا هيفرح بيكي اوي",
+ "المحبة اللي جواكي دي من ربنا يا حبيبتي 🌟 نوّري بيها",
+ "اقبلي نفسك زي ما ربنا قابلك يا جوجو ❤️ إنتي عظيمة",
+ "فاضل إصحاح واحد بس يا حبيبتي 🎈 إنتي قرّبتي اوي!",
+ "كل سنة وانت طيب يا جوجو 🎂 خلّصت قراية السفر كلو! كنت عايزة نخلص عشان يبقى عيد ميلاد مختلف، سنة تكون مليانة بفرح وسلام يا حبيبي، بحبك ❤️❤️🫂"
+];
+
 const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
 const fmt = d => d.toLocaleDateString("ar-EG", {weekday:"long", day:"numeric", month:"long"});
 const dayOf = i => { const d = new Date(START); d.setDate(d.getDate() + i); return d; };
@@ -142,9 +183,37 @@ function todayIndex(){
 }
 
 function toggle(n){
-  done.has(n) ? done.delete(n) : done.add(n);
+  const wasDone = done.has(n);
+  wasDone ? done.delete(n) : done.add(n);
   save(); render();
+  if (!wasDone) celebrate(n);   // الرسالة تطلع بس لما نعلّم إننا قرينا
 }
+
+function confetti(){
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const colors = ["#a8843a","#3d7a52","#9cc3a6","#d6b46a","#e3ebe2","#3d5a46"];
+  for (let i = 0; i < 90; i++){
+    const c = document.createElement("i");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = colors[i % colors.length];
+    c.style.animationDelay = (Math.random() * .6) + "s";
+    c.style.animationDuration = (2 + Math.random() * 1.6) + "s";
+    document.body.append(c);
+    setTimeout(() => c.remove(), 4500);
+  }
+}
+
+function celebrate(n){
+  const isBday = n === 16;
+  document.getElementById("celebrateMsg").textContent = MSG[n-1];
+  document.getElementById("celebrateEmoji").textContent = isBday ? "🎂" : "💚";
+  document.querySelector(".celebrate-card").classList.toggle("birthday", isBday);
+  document.getElementById("celebrate").hidden = false;
+  if (isBday) confetti();
+}
+
+function closeCelebrate(){ document.getElementById("celebrate").hidden = true; }
 
 function render(){
   const idx = todayIndex();
@@ -191,7 +260,15 @@ function render(){
 document.getElementById("reset").addEventListener("click", e => {
   const b = e.currentTarget;
   if (b.dataset.confirm){ done = new Set(); save(); render(); b.textContent = "ابدأ من الأول"; delete b.dataset.confirm; }
-  else { b.dataset.confirm = "1"; b.textContent = "متأكدة؟ دوسي تاني علشان تمسحي العلامات"; }
+  else { b.dataset.confirm = "1"; b.textContent = "متأكدة؟ دوسي تاني علشان تمسح العلامات يا جوجو😘"; }
+});
+
+document.getElementById("celebrateClose").addEventListener("click", closeCelebrate);
+document.getElementById("celebrate").addEventListener("click", e => {
+  if (e.target.id === "celebrate") closeCelebrate();   // الدوس بره الكارت بيقفل
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !document.getElementById("celebrate").hidden) closeCelebrate();
 });
 
 render();
