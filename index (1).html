@@ -86,7 +86,7 @@ footer{display:flex;justify-content:center}
     <div class="bar" aria-hidden="true"><i id="prog"></i></div>
   </header>
 
-  <div class="done-all" id="doneAll" hidden>خلصتي رسالة رومية كلها 🎉 مجدًا لله</div>
+  <div class="done-all" id="doneAll" hidden>خلّصت رسالة رومية كلها 🎉 مجدًا لله</div>
 
   <section class="today" aria-live="polite">
     <span class="lbl" id="todayLbl"></span>
@@ -103,7 +103,7 @@ footer{display:flex;justify-content:center}
 
   <section style="display:grid;gap:10px">
     <h2>الخطة</h2>
-    <p class="hint">دوسي على أي إصحاح علشان تعلّمي عليه أو تشيلي العلامة.</p>
+    <p class="hint">دوس على أي إصحاح علشان تعلّم عليه أو تشيل العلامة.</p>
     <ol class="days" id="days"></ol>
   </section>
 
@@ -145,20 +145,20 @@ const CH = [
 // رسالة تهنئة مختلفة لكل إصحاح لما جوجو تخلصه · آخر واحدة (١٦) هدية عيد الميلاد
 const MSG = [
  "شاطر يا جوجو 😘 بابا يسوع بيحبك اوي!",
- "برافو يا حبيبتي ❤️ كل إصحاح بيقرّبك ليه أكتر",
- "جامدة يا جوجو ✨ ربنا فرحان بيكي النهاردة",
+ "برافو يا حبيبي ❤️ كل إصحاح بيقرّبك ليه أكتر",
+ "جامد يا جوجو ✨ ربنا فرحان بيك النهاردة",
  "تسلم إيدك اللي بتقلب الكلمة يا قمر 🌙 إيمانك زي إبراهيم",
- "عندك سلام مع ربنا يا حبيبتي 🕊️ إنتي شاطرة اوي",
- "إنتي حية لله يا جوجو ❤️ وده أحلى حاجة في الدنيا",
- "ماتخافيش من أي صراع يا حبيبتي 💪 روح ربنا جواكي بتسندك",
+ "عندك سلام مع ربنا يا حبيبي 🕊️ إنت شاطر اوي",
+ "إنت حيّ لله يا جوجو ❤️ وده أحلى حاجة في الدنيا",
+ "ماتخافش من أي صراع يا حبيبي 💪 روح ربنا جواك بتسندك",
  "محدش يقدر يفصلك عن محبة المسيح يا جوجو 🥰",
- "ربنا اختارك إنتي بالذات يا حبيبتي 🌸 إنتي غالية عنده",
- "إيمانك بيزيد وإنتي بتسمعي كلمته يا جوجو 📖 شاطرة اوي",
- "يا لعمق محبة ربنا ليكي يا حبيبتي 💚 كمّلي يا بطلة",
- "قدّمي قلبك ذبيحة حية يا جوجو 🙏 وربنا هيفرح بيكي اوي",
- "المحبة اللي جواكي دي من ربنا يا حبيبتي 🌟 نوّري بيها",
- "اقبلي نفسك زي ما ربنا قابلك يا جوجو ❤️ إنتي عظيمة",
- "فاضل إصحاح واحد بس يا حبيبتي 🎈 إنتي قرّبتي اوي!",
+ "ربنا اختارك إنت بالذات يا حبيبي 🌸 إنت غالي عنده",
+ "إيمانك بيزيد وإنت بتسمع كلمته يا جوجو 📖 شاطر اوي",
+ "يا لعمق محبة ربنا ليك يا حبيبي 💚 كمّل يا بطل",
+ "قدّم قلبك ذبيحة حية يا جوجو 🙏 وربنا هيفرح بيك اوي",
+ "المحبة اللي جواك دي من ربنا يا حبيبي 🌟 نوّر بيها",
+ "اقبل نفسك زي ما ربنا قابلك يا جوجو ❤️ إنت عظيم",
+ "فاضل إصحاح واحد بس يا حبيبي 🎈 إنت قرّبت اوي!",
  "كل سنة وانت طيب يا جوجو 🎂 خلّصت قراية السفر كلو! كنت عايزة نخلص عشان يبقى عيد ميلاد مختلف، سنة تكون مليانة بفرح وسلام يا حبيبي، بحبك ❤️❤️🫂"
 ];
 
@@ -220,7 +220,7 @@ function render(){
   const ch = Math.min(Math.max(idx + 1, 1), 16);
 
   document.getElementById("range").textContent = `من ${fmt(START)} لحد ${fmt(dayOf(15))}`;
-  document.getElementById("count").textContent = `قريتي ${AR(done.size)} من ${AR(16)}`;
+  document.getElementById("count").textContent = `قريت ${AR(done.size)} من ${AR(16)}`;
   document.getElementById("pct").textContent = AR(Math.round(done.size / 16 * 100)) + "٪";
   document.getElementById("prog").style.width = (done.size / 16 * 100) + "%";
   document.getElementById("doneAll").hidden = done.size < 16;
@@ -235,7 +235,7 @@ function render(){
   const btn = document.getElementById("mark");
   const isDone = done.has(ch);
   btn.classList.toggle("on", isDone);
-  btn.textContent = isDone ? "✓ قريته" : "علّمي إنك قريتي";
+  btn.textContent = isDone ? "✓ قريته" : "علّم إنك قريت";
   btn.onclick = () => toggle(ch);
 
   const ol = document.getElementById("days");
@@ -260,7 +260,7 @@ function render(){
 document.getElementById("reset").addEventListener("click", e => {
   const b = e.currentTarget;
   if (b.dataset.confirm){ done = new Set(); save(); render(); b.textContent = "ابدأ من الأول"; delete b.dataset.confirm; }
-  else { b.dataset.confirm = "1"; b.textContent = "متأكدة؟ دوسي تاني علشان تمسح العلامات يا جوجو😘"; }
+  else { b.dataset.confirm = "1"; b.textContent = "متأكد؟ دوس تاني علشان تمسح العلامات يا جوجو😘"; }
 });
 
 document.getElementById("celebrateClose").addEventListener("click", closeCelebrate);
