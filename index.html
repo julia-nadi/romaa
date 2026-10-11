@@ -57,6 +57,8 @@ h2{font-family:var(--display);font-size:24px;margin:0}
 .check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:15px;color:var(--surface)}
 .day.done .check{background:var(--done);border-color:var(--done)}
 .day.done .t b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.day.locked{opacity:.5;cursor:not-allowed}
+.day.locked .check{border-style:dashed;font-size:13px}
 .done-all{background:var(--accent-soft);border-radius:14px;padding:18px;text-align:center;font-family:var(--display);font-size:22px}
 footer{display:flex;justify-content:center}
 .reset{background:transparent;border-color:var(--line);color:var(--muted);font-weight:500;font-size:14px;padding:6px 14px}
@@ -142,25 +144,35 @@ const CH = [
  ["التحيات والختام","نعمة ربنا يسوع المسيح معكم"]
 ];
 
-// رسالة تهنئة مختلفة لكل إصحاح لما جوجو تخلصه · آخر واحدة (١٦) هدية عيد الميلاد
-const MSG = [
- "شاطر يا جوجو 😘 بابا يسوع بيحبك اوي!",
- "برافو يا حبيبي ❤️ كل إصحاح بيقرّبك ليه أكتر",
- "جامد يا جوجو ✨ ربنا فرحان بيك النهاردة",
- "تسلم إيدك اللي بتقلب الكلمة يا بوغاشة انت 🌙 إيمانك زي إبراهيم",
- "عندك سلام مع ربنا يا حبيبي 🕊️ إنت شاطر اوي",
- "إنت حيّ لله يا جوجو ❤️ وده أحلى حاجة في الدنيا",
- "ماتخافش من أي صراع يا حبيبي 💪 روح ربنا جواك بتسندك",
- "محدش يقدر يفصلك عن محبة بابا يسوع يا جوجو 🥰",
- "ربنا اختارك إنت بالذات يا حبيبي 🌸 إنت غالي عنده",
- "إيمانك بيزيد وإنت بتسمع كلمته يا جوجو 📖 شاطر اوي",
- " محبة ربنا ليك يا جوجو حاجة جميلة اوى 💚 كمّل يا بطل",
- "قدّم قلبك ذبيحة حية يا جوجو 🙏 وربنا هيفرح بيك اوي",
- "المحبة والحنية والطيبة اللي جواك دي من ربنا يا حبيبي 🌟 نوّر بيها",
- "اقبل نفسك زي ما ربنا قابلك يا جوجو ❤️ إنت جميل اوي، وده أهم حاجة",
- "فاضل إصحاح واحد بس يا حبيبي 🎈 إنت قرّبت اوي! ياجاوجو",
- "كل سنة وانت طيب يا جوجو 🎂 خلّصت قراية السفر كلو! كنت عايزة نخلص عشان يبقى عيد ميلاد مختلف، سنة تكون مليانة بفرح وسلام يا حبيبي، بحبك ❤️❤️🫂"
+// الرسائل مشفّرة (Base64) عشان محدش فضولي يقدر يقراها من مصدر الصفحة.
+// كل رسالة ما تتفكّش غير في يومها عن طريق decodeMsg، فالرسائل اللي لسه ماجاش يومها
+// بتفضل مقفولة. مش حماية كاملة (اللي يعرف Base64 يقدر يفكها يدوي) بس بتوقف الفضول العادي.
+const MSG_ENC = [
+ "2LTYp9i32LEg2YrYpyDYrNmI2KzZiCDwn5iYINio2KfYqNinINmK2LPZiNi5INio2YrYrdio2YMg2KfZiNmKIQ==",
+ "2KjYsdin2YHZiCDZitinINit2KjZitio2Yog4p2k77iPINmD2YQg2KXYtdit2KfYrSDYqNmK2YLYsdmR2KjZgyDZhNmK2Ycg2KPZg9iq2LE=",
+ "2KzYp9mF2K8g2YrYpyDYrNmI2KzZiCDinKgg2LHYqNmG2Kcg2YHYsdit2KfZhiDYqNmK2YMg2KfZhNmG2YfYp9ix2K/YqQ==",
+ "2KrYs9mE2YUg2KXZitiv2YMg2KfZhNmE2Yog2KjYqtmC2YTYqCDYp9mE2YPZhNmF2Kkg2YrYpyDYqNmI2LrYp9i02Kkg2KfZhtiqIPCfjJkg2KXZitmF2KfZhtmDINiy2Yog2KXYqNix2KfZh9mK2YU=",
+ "2LnZhtiv2YMg2LPZhNin2YUg2YXYuSDYsdio2YbYpyDZitinINit2KjZitio2Yog8J+Viu+4jyDYpdmG2Kog2LTYp9i32LEg2KfZiNmK",
+ "2KXZhtiqINit2YrZkSDZhNmE2Ycg2YrYpyDYrNmI2KzZiCDinaTvuI8g2YjYr9mHINij2K3ZhNmJINit2KfYrNipINmB2Yog2KfZhNiv2YbZitin",
+ "2YXYp9iq2K7Yp9mB2LQg2YXZhiDYo9mKINi12LHYp9i5INmK2Kcg2K3YqNmK2KjZiiDwn5KqINix2YjYrSDYsdio2YbYpyDYrNmI2KfZgyDYqNiq2LPZhtiv2YM=",
+ "2YXYrdiv2LQg2YrZgtiv2LEg2YrZgdi12YTZgyDYudmGINmF2K3YqNipINio2KfYqNinINmK2LPZiNi5INmK2Kcg2KzZiNis2Ygg8J+lsA==",
+ "2LHYqNmG2Kcg2KfYrtiq2KfYsdmDINil2YbYqiDYqNin2YTYsNin2Kog2YrYpyDYrdio2YrYqNmKIPCfjLgg2KXZhtiqINi62KfZhNmKINi52YbYr9mH",
+ "2KXZitmF2KfZhtmDINio2YrYstmK2K8g2YjYpdmG2Kog2KjYqtiz2YXYuSDZg9mE2YXYqtmHINmK2Kcg2KzZiNis2Ygg8J+TliDYtNin2LfYsSDYp9mI2Yo=",
+ "INmF2K3YqNipINix2KjZhtinINmE2YrZgyDZitinINis2YjYrNmIINit2KfYrNipINis2YXZitmE2Kkg2KfZiNmJIPCfkpog2YPZhdmR2YQg2YrYpyDYqNi32YQ=",
+ "2YLYr9mR2YUg2YLZhNio2YMg2LDYqNmK2K3YqSDYrdmK2Kkg2YrYpyDYrNmI2KzZiCDwn5mPINmI2LHYqNmG2Kcg2YfZitmB2LHYrSDYqNmK2YMg2KfZiNmK",
+ "2KfZhNmF2K3YqNipINmI2KfZhNit2YbZitipINmI2KfZhNi32YrYqNipINin2YTZhNmKINis2YjYp9mDINiv2Yog2YXZhiDYsdio2YbYpyDZitinINit2KjZitio2Yog8J+MnyDZhtmI2ZHYsSDYqNmK2YfYpw==",
+ "2KfZgtio2YQg2YbZgdiz2YMg2LLZiiDZhdinINix2KjZhtinINmC2KfYqNmE2YMg2YrYpyDYrNmI2KzZiCDinaTvuI8g2KXZhtiqINis2YXZitmEINin2YjZitiMINmI2K/ZhyDYo9mH2YUg2K3Yp9is2Kk=",
+ "2YHYp9i22YQg2KXYtdit2KfYrSDZiNin2K3YryDYqNizINmK2Kcg2K3YqNmK2KjZiiDwn46IINil2YbYqiDZgtix2ZHYqNiqINin2YjZiiEg2YrYp9is2KfZiNis2Yg=",
+ "2YPZhCDYs9mG2Kkg2YjYp9mG2Kog2LfZitioINmK2Kcg2KzZiNis2Ygg8J+OgiDYrtmE2ZHYtdiqINmC2LHYp9mK2Kkg2KfZhNiz2YHYsSDZg9mE2YghINmD2YbYqiDYudin2YrYstipINmG2K7ZhNi1INi52LTYp9mGINmK2KjZgtmJINi52YrYryDZhdmK2YTYp9ivINmF2K7YqtmE2YHYjCDYs9mG2Kkg2KrZg9mI2YYg2YXZhNmK2KfZhtipINio2YHYsditINmI2LPZhNin2YUg2YrYpyDYrdio2YrYqNmK2Iwg2KjYrdio2YMg4p2k77iP4p2k77iP8J+rgg=="
 ];
+
+// بيفك تشفير رسالة واحدة بس (UTF-8) لما يتطلب منها — مش بنفك الكل دفعة واحدة.
+function decodeMsg(i){
+  return new TextDecoder().decode(Uint8Array.from(atob(MSG_ENC[i]), c => c.charCodeAt(0)));
+}
+
+// الإصحاح بيتفتح بس لما ييجي يومه (أو بعده). اللي لسه ماجاش يومه بيفضل مقفول.
+function isUnlocked(n){ return todayIndex() >= n - 1; }
 
 const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
 const fmt = d => d.toLocaleDateString("ar-EG", {weekday:"long", day:"numeric", month:"long"});
@@ -183,6 +195,7 @@ function todayIndex(){
 }
 
 function toggle(n){
+  if (!isUnlocked(n)){ lockedNote(n); return; }   // لسه بدري: مفيش فتح ولا رسالة
   const wasDone = done.has(n);
   wasDone ? done.delete(n) : done.add(n);
   save(); render();
@@ -205,12 +218,21 @@ function confetti(){
 }
 
 function celebrate(n){
+  if (!isUnlocked(n)){ lockedNote(n); return; }   // أمان زيادة: ماتفكّش رسالة لسه بدري
   const isBday = n === 16;
-  document.getElementById("celebrateMsg").textContent = MSG[n-1];
+  document.getElementById("celebrateMsg").textContent = decodeMsg(n-1);   // بنفك التشفير هنا بس
   document.getElementById("celebrateEmoji").textContent = isBday ? "🎂" : "💚";
   document.querySelector(".celebrate-card").classList.toggle("birthday", isBday);
   document.getElementById("celebrate").hidden = false;
   if (isBday) confetti();
+}
+
+function lockedNote(n){
+  document.querySelector(".celebrate-card").classList.remove("birthday");
+  document.getElementById("celebrateEmoji").textContent = "🔒";
+  document.getElementById("celebrateMsg").textContent =
+    `لسه بدري يا حبيبي 🔒 الرسالة دي هتتفتح يوم ${fmt(dayOf(n-1))}`;
+  document.getElementById("celebrate").hidden = false;
 }
 
 function closeCelebrate(){ document.getElementById("celebrate").hidden = true; }
@@ -234,22 +256,24 @@ function render(){
 
   const btn = document.getElementById("mark");
   const isDone = done.has(ch);
-  btn.classList.toggle("on", isDone);
-  btn.textContent = isDone ? "✓ قريته" : "علّم إنك قريت";
+  const chLocked = !isUnlocked(ch);
+  btn.classList.toggle("on", isDone && !chLocked);
+  btn.textContent = chLocked ? "🔒 لسه بدري" : (isDone ? "✓ قريته" : "علّم إنك قريت");
   btn.onclick = () => toggle(ch);
 
   const ol = document.getElementById("days");
   ol.replaceChildren();
   CH.forEach(([theme], i) => {
     const n = i + 1;
+    const locked = !isUnlocked(n);
     const li = document.createElement("li");
-    li.className = "day" + (n === ch ? " cur" : "") + (done.has(n) ? " done" : "");
+    li.className = "day" + (n === ch ? " cur" : "") + (done.has(n) ? " done" : "") + (locked ? " locked" : "");
     li.tabIndex = 0;
     li.setAttribute("role", "checkbox");
     li.setAttribute("aria-checked", done.has(n));
     li.innerHTML = `<span class="n">${AR(n)}</span>
       <div class="t"><b></b><small>${fmt(dayOf(i))}</small></div>
-      <span class="check">${done.has(n) ? "✓" : ""}</span>`;
+      <span class="check">${done.has(n) ? "✓" : (locked ? "🔒" : "")}</span>`;
     li.querySelector("b").textContent = theme;
     li.onclick = () => toggle(n);
     li.onkeydown = e => { if (e.key === " " || e.key === "Enter"){ e.preventDefault(); toggle(n); } };
